@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Proposal — Car Leasing Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+/* ─── TOKENS ─── */
+:root {
+  --ink:      #0B0C0F;
+  --ink2:     #13141A;
+  --ink3:     #1C1D24;
+  --white:    #FFFFFF;
+  --off:      #F4F3F0;
+  --off2:     #EDECE8;
+  --muted:    #8C8C96;
+  --border:   rgba(0,0,0,0.08);
+  --red:      #E8302A;
+  --red2:     #FF4B44;
+
+  /* Demo site tokens (dark+gold) */
+  --d-bg:     #090909;
+  --d-bg2:    #111115;
+  --d-bg3:    #18181E;
+  --d-gold:   #C9A048;
+  --d-gold2:  #E8C06A;
+  --d-border: rgba(201,160,72,0.18);
+  --d-muted:  #666672;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
+body { background:var(--white); color:var(--ink); font-family:'DM Sans', sans-serif; overflow-x:hidden; }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:var(--off); }
+::-webkit-scrollbar-thumb { background:#ccc; border-radius:2px; }
+
+/* ─── NAV ─── */
+.nav {
+  position:sticky; top:0; z-index:200;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 5vw;
+  height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo img { height:30px; display:block; }
+.nav-links { display:flex; align-items:center; gap:2.5rem; }
+.nav-links a {
+  font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--muted); text-decoration:none; transition:color .2s;
+  font-weight:500;
+}
+.nav-links a:hover { color:var(--ink); }
+.nav-sign {
+  background:var(--ink); color:var(--white);
+  padding:0.5rem 1.3rem; font-size:0.72rem; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase;
+  border-radius:2px; text-decoration:none; transition:background .2s;
+}
+.nav-sign:hover { background:var(--red); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height:100svh;
+  display:grid; grid-template-columns:55% 45%;
+  position:relative; overflow:hidden;
+}
+.hero-left {
+  padding:clamp(6rem,12vh,10rem) 5vw clamp(4rem,8vh,6rem) 5vw;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; z-index:2;
+}
+.hero-tag {
+  display:inline-flex; align-items:center; gap:0.6rem;
+  font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--red); font-weight:600; margin-bottom:2rem;
+}
+.hero-tag::before {
+  content:''; display:block; width:24px; height:1.5px; background:var(--red);
+}
+.hero-h1 {
+  font-family:'Syne', sans-serif;
+  font-size:clamp(3rem,6vw,5.5rem);
+  font-weight:800; line-height:0.95; letter-spacing:-0.02em;
+  color:var(--ink); margin-bottom:1.8rem;
+}
+.hero-h1 em { color:var(--red); font-style:normal; }
+.hero-sub {
+  font-size:1rem; color:var(--muted); line-height:1.75;
+  max-width:440px; margin-bottom:3rem; font-weight:300;
+}
+.hero-stats {
+  display:grid; grid-template-columns:repeat(3,auto); gap:0;
+  border:1px solid var(--border); border-radius:4px;
+  overflow:hidden; max-width:460px; margin-bottom:3rem;
+}
+.hero-stat {
+  padding:1.2rem 1.4rem; border-right:1px solid var(--border);
+}
+.hero-stat:last-child { border-right:none; }
+.hs-val {
+  font-family:'Syne', sans-serif; font-size:1.5rem;
+  font-weight:700; color:var(--ink);
+}
+.hs-lbl { font-size:0.68rem; color:var(--muted); margin-top:0.2rem; letter-spacing:0.06em; }
+.hero-btns { display:flex; gap:1rem; flex-wrap:wrap; }
+.btn-primary {
+  background:var(--ink); color:var(--white);
+  padding:0.85rem 2.2rem; font-size:0.78rem; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase;
+  border-radius:2px; text-decoration:none; display:inline-block; transition:background .2s;
+}
+.btn-primary:hover { background:var(--red); }
+.btn-ghost {
+  background:transparent; color:var(--ink);
+  padding:0.85rem 2.2rem; font-size:0.78rem; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase;
+  border:1.5px solid var(--border); border-radius:2px;
+  text-decoration:none; display:inline-block; transition:border-color .2s;
+}
+.btn-ghost:hover { border-color:var(--ink); }
+
+.hero-right {
+  position:relative; overflow:hidden;
+  background:var(--ink);
+}
+.hero-right-img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; opacity:0.45;
+}
+.hero-right-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(160deg, rgba(11,12,15,0.3) 0%, rgba(11,12,15,0.7) 100%);
+}
+.hero-right-content {
+  position:absolute; inset:0; padding:3rem;
+  display:flex; flex-direction:column; justify-content:flex-end;
+}
+.hero-pill {
+  display:inline-flex; align-items:center; gap:0.5rem;
+  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(8px); border-radius:100px;
+  padding:0.4rem 1rem; font-size:0.7rem; color:rgba(255,255,255,0.7);
+  letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1.5rem;
+  width:fit-content;
+}
+.hero-pill-dot { width:6px; height:6px; border-radius:50%; background:#4ADE80; }
+.hero-card {
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  backdrop-filter:blur(20px); border-radius:8px; padding:1.8rem;
+}
+.hero-card-label {
+  font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase;
+  color:rgba(255,255,255,0.4); margin-bottom:0.6rem;
+}
+.hero-card-title {
+  font-family:'Syne', sans-serif; font-size:1.1rem;
+  font-weight:700; color:var(--white); margin-bottom:0.3rem;
+}
+.hero-card-sub { font-size:0.78rem; color:rgba(255,255,255,0.45); line-height:1.5; }
+.hero-panels {
+  display:flex; gap:0.5rem; margin-top:1.2rem;
+}
+.hero-panel-badge {
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1);
+  border-radius:100px; padding:0.3rem 0.8rem;
+  font-size:0.62rem; color:rgba(255,255,255,0.5); letter-spacing:0.06em;
+}
+
+/* ─── DIVIDER ─── */
+hr.div { border:none; border-top:1px solid var(--border); margin:0; }
+
+/* ─── SECTION BASE ─── */
+section { padding:clamp(5rem,9vw,8rem) 5vw; }
+section.bg-off { background:var(--off); }
+section.bg-ink { background:var(--ink); color:var(--white); }
+.sec-tag {
+  font-size:0.65rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--red); font-weight:600; margin-bottom:0.8rem;
+  display:flex; align-items:center; gap:0.5rem;
+}
+.sec-tag::before { content:''; display:block; width:16px; height:1.5px; background:var(--red); }
+.bg-ink .sec-tag { color:#ff8880; }
+.bg-ink .sec-tag::before { background:#ff8880; }
+.sec-h2 {
+  font-family:'Syne', sans-serif;
+  font-size:clamp(2rem,4vw,3rem);
+  font-weight:800; line-height:1.0; letter-spacing:-0.02em;
+  margin-bottom:0.8rem;
+}
+.sec-h2 em { color:var(--red); font-style:normal; }
+.bg-ink .sec-h2 em { color:#FF6B64; }
+.sec-desc { font-size:0.9rem; color:var(--muted); line-height:1.8; max-width:500px; margin-bottom:3rem; font-weight:300; }
+.bg-ink .sec-desc { color:rgba(255,255,255,0.4); }
+
+/* ─── OVERVIEW 3-COL ─── */
+.ov-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1.5rem; margin-top:3rem;
+}
+.ov-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:6px; padding:2.2rem;
+  transition:border-color .25s, box-shadow .25s, transform .25s;
+}
+.ov-card:hover {
+  border-color:var(--ink); box-shadow:0 8px 40px rgba(0,0,0,0.07);
+  transform:translateY(-2px);
+}
+.bg-off .ov-card { background:var(--white); }
+.ov-num {
+  font-family:'Syne', sans-serif; font-size:2.5rem;
+  font-weight:800; color:var(--off2); line-height:1; margin-bottom:1rem;
+  letter-spacing:-0.04em;
+}
+.ov-title { font-family:'Syne', sans-serif; font-size:1rem; font-weight:700; margin-bottom:0.6rem; }
+.ov-desc { font-size:0.82rem; color:var(--muted); line-height:1.75; }
+.ov-tags { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:1.2rem; }
+.ov-tag {
+  font-size:0.62rem; letter-spacing:0.06em; padding:0.3rem 0.7rem;
+  border-radius:100px; background:var(--off); color:var(--muted);
+}
+
+/* ─── BROWSER SHELL ─── */
+.browser-shell {
+  border-radius:10px; overflow:hidden;
+  border:1px solid rgba(0,0,0,0.12);
+  box-shadow:0 32px 80px rgba(0,0,0,0.14);
+  background:#fff;
+}
+.browser-chrome {
+  background:#ECECEC; padding:0.65rem 1rem;
+  display:flex; align-items:center; gap:0.7rem;
+  border-bottom:1px solid rgba(0,0,0,0.1);
+}
+.bc-dot { width:10px; height:10px; border-radius:50%; }
+.bc-dot.r{background:#FF5F57;} .bc-dot.y{background:#FEBC2E;} .bc-dot.g{background:#28C840;}
+.bc-url {
+  flex:1; max-width:380px;
+  background:rgba(255,255,255,0.8); border:1px solid rgba(0,0,0,0.1);
+  border-radius:5px; padding:0.28rem 0.8rem;
+  font-size:0.7rem; color:#666; font-family:'DM Sans',sans-serif;
+  display:flex; align-items:center; gap:0.4rem;
+}
+.bc-url-lock { opacity:0.5; font-size:0.65rem; }
+
+/* ─── PANEL TABS ─── */
+.panel-tabs {
+  display:flex; gap:0; border-bottom:1.5px solid var(--border);
+  margin-bottom:3rem; overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+.panel-tab {
+  padding:0.9rem 1.8rem; font-size:0.72rem; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase;
+  cursor:pointer; color:var(--muted);
+  border:none; border-bottom:2px solid transparent;
+  margin-bottom:-1.5px; transition:all .2s;
+  background:none; white-space:nowrap;
+  display:flex; align-items:center; gap:0.5rem;
+}
+.panel-tab svg { width:14px; height:14px; flex-shrink:0; }
+.panel-tab.active { color:var(--ink); border-bottom-color:var(--ink); }
+.panel-view { display:none; }
+.panel-view.active { display:block; }
+
+/* ═══════════════════════════════════════
+   DEMO SITE — DARK + GOLD PREMIUM THEME
+═══════════════════════════════════════ */
+.demo-site { background:var(--d-bg); font-family:'DM Sans',sans-serif; }
+
+/* Demo Nav */
+.demo-nav {
+  background:var(--d-bg);
+  border-bottom:1px solid var(--d-border);
+  padding:0 2rem; height:56px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.demo-nav-logo {
+  font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800;
+  color:var(--white); letter-spacing:0.02em;
+}
+.demo-nav-logo span { color:var(--d-gold); }
+.demo-nav-links { display:flex; gap:2rem; }
+.demo-nav-links a {
+  font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase;
+  color:rgba(255,255,255,0.4); text-decoration:none;
+}
+.demo-nav-btn {
+  background:transparent; border:1px solid var(--d-gold);
+  color:var(--d-gold); padding:0.4rem 1.1rem;
+  font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase;
+  border-radius:2px; cursor:pointer;
+}
+
+/* Demo Hero */
+.demo-hero {
+  position:relative; overflow:hidden;
+  min-height:220px; display:grid; grid-template-columns:1fr 1fr;
+}
+.demo-hero-left {
+  padding:2.5rem 2rem; display:flex; flex-direction:column; justify-content:center;
+  background:var(--d-bg); position:relative; z-index:2;
+}
+.demo-hero-left::after {
+  content:''; position:absolute; right:0; top:0; bottom:0;
+  width:60px;
+  background:linear-gradient(to right, transparent, rgba(9,9,9,0));
+}
+.demo-hero-eyebrow {
+  font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--d-gold); font-weight:600; margin-bottom:0.7rem;
+  display:flex; align-items:center; gap:0.5rem;
+}
+.demo-hero-eyebrow::before { content:''; width:18px; height:1px; background:var(--d-gold); display:block; }
+.demo-hero-h1 {
+  font-family:'Syne',sans-serif; font-size:2rem; font-weight:800;
+  line-height:0.95; color:var(--white); letter-spacing:-0.02em; margin-bottom:0.7rem;
+}
+.demo-hero-h1 span { color:var(--d-gold); }
+.demo-hero-sub {
+  font-size:0.72rem; color:rgba(255,255,255,0.4);
+  line-height:1.65; max-width:240px; margin-bottom:1.2rem;
+}
+.demo-search-bar {
+  display:flex; gap:0; max-width:340px;
+  border:1px solid rgba(201,160,72,0.3); border-radius:3px; overflow:hidden;
+}
+.demo-search-bar input, .demo-search-bar select {
+  background:var(--d-bg3); border:none;
+  padding:0.5rem 0.8rem; font-size:0.68rem;
+  color:rgba(255,255,255,0.6); font-family:'DM Sans',sans-serif;
+  outline:none;
+}
+.demo-search-bar input { flex:1; min-width:0; border-right:1px solid rgba(201,160,72,0.15); }
+.demo-search-bar select { width:100px; border-right:1px solid rgba(201,160,72,0.15); }
+.demo-search-btn {
+  background:var(--d-gold); color:var(--d-bg); border:none;
+  padding:0.5rem 1rem; font-size:0.68rem; font-weight:700;
+  letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; white-space:nowrap;
+}
+
+.demo-hero-right { position:relative; overflow:hidden; }
+.demo-hero-right img {
+  width:100%; height:100%; object-fit:cover;
+  filter:brightness(0.55) saturate(0.8);
+  display:block;
+}
+.demo-hero-right-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to right, var(--d-bg) 0%, transparent 35%),
+             linear-gradient(to top, var(--d-bg) 0%, transparent 40%);
+}
+.demo-hero-badge {
+  position:absolute; bottom:1rem; left:1rem;
+  background:rgba(201,160,72,0.12); border:1px solid var(--d-border);
+  backdrop-filter:blur(8px); border-radius:4px;
+  padding:0.5rem 0.8rem;
+}
+.demo-hero-badge-top { font-size:0.58rem; color:var(--d-gold); letter-spacing:0.12em; text-transform:uppercase; }
+.demo-hero-badge-val { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:var(--white); margin-top:0.1rem; }
+
+/* Demo Cars Grid */
+.demo-cars-header {
+  background:var(--d-bg); padding:1.2rem 2rem 0.8rem;
+  display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid var(--d-border);
+}
+.demo-cars-title {
+  font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700;
+  color:var(--white); letter-spacing:0.02em;
+}
+.demo-cars-filters { display:flex; gap:0.5rem; }
+.demo-filter-chip {
+  font-size:0.6rem; letter-spacing:0.08em; padding:0.25rem 0.7rem;
+  border-radius:100px; border:1px solid rgba(201,160,72,0.2);
+  color:rgba(255,255,255,0.4); cursor:pointer;
+}
+.demo-filter-chip.active {
+  background:rgba(201,160,72,0.12); border-color:var(--d-gold);
+  color:var(--d-gold);
+}
+.demo-cars-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--d-border); margin:0;
+}
+.demo-car-card { background:var(--d-bg2); overflow:hidden; }
+.demo-car-img-wrap {
+  position:relative; height:110px; overflow:hidden;
+  background:var(--d-bg3);
+}
+.demo-car-img-wrap img {
+  width:100%; height:100%; object-fit:cover;
+  filter:brightness(0.75) saturate(0.85);
+  transition:transform .4s ease;
+  display:block;
+}
+.demo-car-card:hover .demo-car-img-wrap img { transform:scale(1.04); }
+.demo-car-img-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, var(--d-bg2) 0%, transparent 50%);
+}
+.demo-car-badge-avail {
+  position:absolute; top:0.6rem; right:0.6rem;
+  background:rgba(74,222,128,0.15); border:1px solid rgba(74,222,128,0.3);
+  border-radius:100px; padding:0.2rem 0.55rem;
+  font-size:0.55rem; color:#4ADE80; letter-spacing:0.08em; text-transform:uppercase; font-weight:600;
+}
+.demo-car-body { padding:0.9rem 1rem; }
+.demo-car-brand { font-size:0.58rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--d-gold); font-weight:600; }
+.demo-car-name { font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700; color:var(--white); margin-top:0.15rem; }
+.demo-car-specs {
+  display:flex; gap:0.8rem; margin-top:0.5rem;
+}
+.demo-car-spec { font-size:0.6rem; color:var(--d-muted); display:flex; align-items:center; gap:0.25rem; }
+.demo-car-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0.7rem 1rem; border-top:1px solid var(--d-border);
+}
+.demo-car-price { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:var(--white); }
+.demo-car-price span { font-size:0.62rem; color:var(--d-muted); font-weight:400; margin-left:0.1rem; }
+.demo-car-cta {
+  background:transparent; border:1px solid var(--d-border);
+  color:var(--d-gold); padding:0.3rem 0.7rem;
+  font-size:0.6rem; letter-spacing:0.08em; text-transform:uppercase;
+  border-radius:2px; cursor:pointer; font-weight:600;
+  transition:background .2s, border-color .2s;
+}
+.demo-car-cta:hover { background:rgba(201,160,72,0.1); border-color:var(--d-gold); }
+
+/* Demo Features Strip */
+.demo-features-strip {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  background:var(--d-bg3); border-top:1px solid var(--d-border);
+}
+.demo-feature {
+  padding:1.1rem 1.2rem; border-right:1px solid var(--d-border);
+  display:flex; align-items:flex-start; gap:0.7rem;
+}
+.demo-feature:last-child { border-right:none; }
+.demo-feat-icon {
+  width:28px; height:28px; flex-shrink:0;
+  background:rgba(201,160,72,0.08); border:1px solid var(--d-border);
+  border-radius:4px; display:flex; align-items:center; justify-content:center;
+}
+.demo-feat-icon svg { width:14px; height:14px; color:var(--d-gold); }
+.demo-feat-text {}
+.demo-feat-title { font-size:0.7rem; font-weight:600; color:var(--white); }
+.demo-feat-sub { font-size:0.6rem; color:var(--d-muted); margin-top:0.15rem; line-height:1.4; }
+
+/* ─── ADMIN PANEL ─── */
+.admin-wrap { display:flex; min-height:440px; background:var(--off); }
+.admin-sidebar {
+  width:200px; flex-shrink:0; background:var(--ink);
+  display:flex; flex-direction:column;
+}
+.admin-sb-head {
+  padding:1.2rem 1.2rem 1rem;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.admin-sb-logo {
+  font-family:'Syne',sans-serif; font-size:0.9rem; font-weight:800;
+  color:var(--white); letter-spacing:0.01em;
+}
+.admin-sb-logo span { color:var(--red2); }
+.admin-sb-role {
+  font-size:0.6rem; color:rgba(255,255,255,0.3);
+  letter-spacing:0.1em; text-transform:uppercase; margin-top:0.2rem;
+}
+.admin-sb-group { padding:0.8rem 0 0.4rem; }
+.admin-sb-label {
+  font-size:0.55rem; letter-spacing:0.18em; text-transform:uppercase;
+  color:rgba(255,255,255,0.22); padding:0 1.2rem; margin-bottom:0.3rem;
+}
+.admin-sb-item {
+  display:flex; align-items:center; gap:0.6rem;
+  padding:0.5rem 1.2rem; font-size:0.72rem;
+  color:rgba(255,255,255,0.38); cursor:pointer; transition:all .15s;
+}
+.admin-sb-item:hover { color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.04); }
+.admin-sb-item.active {
+  color:var(--white); background:rgba(255,255,255,0.07);
+  border-left:2px solid var(--red2); padding-left:calc(1.2rem - 2px);
+}
+.admin-sb-item svg { width:13px; height:13px; flex-shrink:0; }
+.admin-sb-item .badge-dot {
+  margin-left:auto; background:var(--red2); width:16px; height:16px;
+  border-radius:50%; font-size:0.55rem; color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:700;
+}
+.admin-body { flex:1; overflow:hidden; padding:1.4rem; }
+.admin-topbar {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem;
+}
+.admin-page-title {
+  font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; color:var(--ink);
+}
+.admin-topbar-right { display:flex; align-items:center; gap:0.7rem; }
+.admin-date-chip {
+  font-size:0.65rem; color:var(--muted); background:var(--white);
+  border:1px solid var(--border); border-radius:4px; padding:0.3rem 0.7rem;
+}
+.admin-add-btn {
+  background:var(--ink); color:#fff; border:none;
+  padding:0.35rem 0.85rem; font-size:0.65rem; font-weight:600;
+  letter-spacing:0.08em; border-radius:3px; cursor:pointer;
+}
+.admin-kpi-row {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0.7rem; margin-bottom:1.2rem;
+}
+.kpi {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:6px; padding:1rem 1.1rem; position:relative; overflow:hidden;
+}
+.kpi::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:var(--red);
+}
+.kpi:nth-child(2)::after { background:#3B82F6; }
+.kpi:nth-child(3)::after { background:#F59E0B; }
+.kpi:nth-child(4)::after { background:#22C55E; }
+.kpi-val {
+  font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800;
+  color:var(--ink); line-height:1;
+}
+.kpi-label { font-size:0.6rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-top:0.3rem; }
+.kpi-delta { font-size:0.62rem; color:#22C55E; margin-top:0.3rem; font-weight:600; }
+.admin-table-card {
+  background:var(--white); border:1px solid var(--border); border-radius:6px; overflow:hidden;
+}
+.admin-table-head {
+  display:grid; grid-template-columns:2.2fr 1.4fr 0.9fr 0.8fr 0.9fr;
+  gap:0.5rem; padding:0.6rem 1rem;
+  background:var(--off); border-bottom:1px solid var(--border);
+  font-size:0.6rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted);
+}
+.admin-table-row {
+  display:grid; grid-template-columns:2.2fr 1.4fr 0.9fr 0.8fr 0.9fr;
+  gap:0.5rem; padding:0.62rem 1rem;
+  border-top:1px solid var(--off2);
+  font-size:0.72rem; color:var(--ink); align-items:center;
+}
+.admin-table-row:hover { background:#FAFAF8; }
+.pill {
+  display:inline-block; font-size:0.58rem; font-weight:700;
+  letter-spacing:0.06em; padding:0.2rem 0.6rem; border-radius:100px;
+}
+.pill.active { background:#DCFCE7; color:#15803D; }
+.pill.pending { background:#FEF3C7; color:#B45309; }
+.pill.review { background:#DBEAFE; color:#1D4ED8; }
+
+/* ─── BROKER PANEL ─── */
+.broker-wrap { background:var(--off); }
+.broker-topbar {
+  background:var(--ink); padding:0 1.8rem;
+  height:52px; display:flex; align-items:center; justify-content:space-between;
+}
+.broker-identity { display:flex; flex-direction:column; }
+.broker-welcome { font-size:0.58rem; color:rgba(255,255,255,0.3); letter-spacing:0.1em; text-transform:uppercase; }
+.broker-name { font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700; color:var(--white); }
+.broker-nav-tabs { display:flex; }
+.broker-nav-tab {
+  padding:0 1rem; height:52px; display:flex; align-items:center;
+  font-size:0.67rem; letter-spacing:0.08em; text-transform:uppercase;
+  color:rgba(255,255,255,0.3); cursor:pointer; border-bottom:2px solid transparent;
+}
+.broker-nav-tab.active { color:var(--white); border-bottom-color:var(--red2); }
+.broker-add-btn {
+  background:var(--red); color:#fff; border:none;
+  padding:0.38rem 1rem; font-size:0.65rem; font-weight:700;
+  letter-spacing:0.09em; text-transform:uppercase; border-radius:2px; cursor:pointer;
+}
+.broker-body { padding:1.4rem 1.8rem; }
+.broker-kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.2rem; }
+.bkpi {
+  background:var(--white); border:1px solid var(--border); border-radius:8px;
+  padding:1.1rem 1.2rem;
+}
+.bkpi-val {
+  font-family:'Syne',sans-serif; font-size:1.7rem; font-weight:800; color:var(--ink);
+}
+.bkpi-val sup { font-size:1rem; font-weight:600; color:var(--muted); }
+.bkpi-lbl { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-top:0.25rem; }
+.bkpi-delta { font-size:0.62rem; font-weight:600; color:#22C55E; margin-top:0.2rem; }
+.broker-form-card {
+  background:var(--white); border:1px solid var(--border); border-radius:8px;
+  padding:1.4rem;
+}
+.broker-form-title {
+  font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700;
+  color:var(--ink); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;
+}
+.broker-form-title svg { width:16px; height:16px; color:var(--muted); }
+.broker-field-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.6rem; margin-bottom:0.8rem; }
+.bf { display:flex; flex-direction:column; gap:0.3rem; }
+.bf label { font-size:0.6rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); font-weight:500; }
+.bf input, .bf select {
+  background:var(--off); border:1.5px solid var(--border);
+  border-radius:4px; padding:0.48rem 0.7rem;
+  font-size:0.72rem; color:var(--ink); outline:none;
+  transition:border-color .2s; font-family:'DM Sans',sans-serif;
+}
+.bf input:focus, .bf select:focus { border-color:var(--ink); }
+.broker-submit {
+  background:var(--ink); color:var(--white); border:none;
+  padding:0.6rem 1.6rem; font-size:0.72rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; border-radius:3px;
+  cursor:pointer; transition:background .2s;
+}
+.broker-submit:hover { background:var(--red); }
+
+/* ─── FEATURES 3-COL ─── */
+.features-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:0; border:1.5px solid var(--border); border-radius:6px;
+  overflow:hidden; margin-top:3rem;
+}
+.feat-col {
+  padding:2.5rem 2.2rem; border-right:1.5px solid var(--border);
+  background:var(--white);
+}
+.feat-col:last-child { border-right:none; }
+.feat-col-num {
+  font-family:'Syne',sans-serif; font-size:0.62rem; font-weight:700;
+  letter-spacing:0.2em; text-transform:uppercase; color:var(--red);
+  margin-bottom:1.2rem;
+}
+.feat-col-title {
+  font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:800;
+  color:var(--ink); margin-bottom:1.2rem; line-height:1.15;
+}
+.feat-list { list-style:none; display:flex; flex-direction:column; gap:0.6rem; }
+.feat-list li {
+  font-size:0.8rem; color:var(--muted); line-height:1.55;
+  padding-left:1.1rem; position:relative;
+}
+.feat-list li::before {
+  content:''; position:absolute; left:0; top:0.65em;
+  width:4px; height:1.5px; background:var(--red);
+}
+
+/* ─── PRICING ─── */
+.pricing-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:3rem; }
+.price-card {
+  border-radius:8px; overflow:hidden;
+  border:1.5px solid var(--border);
+}
+.price-card-head { padding:2rem 2.2rem 1.5rem; background:var(--white); }
+.price-card.dark .price-card-head { background:var(--ink); }
+.price-type {
+  font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--red); font-weight:700; margin-bottom:0.8rem;
+}
+.dark .price-type { color:var(--red2); }
+.price-name {
+  font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:800;
+  color:var(--ink); margin-bottom:0.3rem;
+}
+.dark .price-name { color:var(--white); }
+.price-amount { display:flex; align-items:flex-end; gap:0.1rem; margin-bottom:0.5rem; }
+.price-cur { font-size:1.2rem; color:var(--muted); line-height:2; }
+.dark .price-cur { color:rgba(255,255,255,0.4); }
+.price-val {
+  font-family:'Syne',sans-serif; font-size:3.5rem; font-weight:800;
+  line-height:1; color:var(--ink); letter-spacing:-0.04em;
+}
+.dark .price-val { color:var(--white); }
+.price-per { font-size:0.8rem; color:var(--muted); line-height:2.5; }
+.dark .price-per { color:rgba(255,255,255,0.35); }
+.price-desc { font-size:0.82rem; color:var(--muted); line-height:1.7; }
+.dark .price-desc { color:rgba(255,255,255,0.45); }
+.price-note {
+  font-size:0.78rem; color:var(--ink); line-height:1.65;
+  background:var(--off); border-left:3px solid var(--red);
+  padding:0.8rem 1rem; margin-top:1rem; border-radius:0 4px 4px 0;
+}
+.dark .price-note { background:rgba(255,255,255,0.05); border-left-color:var(--red2); color:rgba(255,255,255,0.7); }
+.price-card-body {
+  padding:1.5rem 2.2rem 2rem; background:var(--off);
+  border-top:1.5px solid var(--border);
+}
+.dark .price-card-body { background:rgba(255,255,255,0.03); border-top-color:rgba(255,255,255,0.08); }
+.price-items { list-style:none; display:flex; flex-direction:column; gap:0.6rem; }
+.price-item {
+  display:flex; align-items:flex-start; gap:0.7rem;
+  font-size:0.8rem; color:var(--muted); line-height:1.5;
+}
+.dark .price-item { color:rgba(255,255,255,0.45); }
+.pi-check {
+  width:16px; height:16px; border-radius:50%;
+  background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.25);
+  flex-shrink:0; margin-top:0.1rem; display:flex; align-items:center; justify-content:center;
+}
+.pi-check svg { width:8px; height:8px; color:#22C55E; }
+.price-badge {
+  position:absolute; top:1.2rem; right:1.2rem;
+  background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.25);
+  color:#3B82F6; font-size:0.6rem; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; padding:0.25rem 0.65rem; border-radius:100px;
+}
+
+/* ─── SEO ─── */
+.seo-box {
+  border:1.5px solid var(--border); border-radius:8px;
+  overflow:hidden; margin-top:3rem;
+}
+.seo-head {
+  background:var(--ink); padding:2.5rem;
+  display:grid; grid-template-columns:1fr auto; gap:2rem; align-items:center;
+}
+.seo-head-title {
+  font-family:'Syne',sans-serif; font-size:2rem; font-weight:800;
+  color:var(--white); line-height:1.0; letter-spacing:-0.02em;
+}
+.seo-head-title em { color:var(--red2); font-style:normal; }
+.seo-head-sub {
+  font-size:0.82rem; color:rgba(255,255,255,0.38);
+  line-height:1.7; margin-top:0.7rem; max-width:500px;
+}
+.seo-price-block {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  border-radius:6px; padding:1.5rem 2rem; text-align:right; white-space:nowrap;
+}
+.seo-price {
+  font-family:'Syne',sans-serif; font-size:2.8rem; font-weight:800;
+  color:var(--white); letter-spacing:-0.03em; line-height:1;
+}
+.seo-price-sub { font-size:0.68rem; color:rgba(255,255,255,0.35); letter-spacing:0.12em; text-transform:uppercase; margin-top:0.4rem; }
+.seo-body { padding:2.5rem; background:var(--white); }
+.seo-explain {
+  font-size:0.88rem; color:var(--muted); line-height:1.85;
+  max-width:640px; margin-bottom:2rem;
+}
+.seo-explain strong { color:var(--ink); }
+.seo-kw-label {
+  font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:0.7rem;
+}
+.seo-kws { display:flex; flex-wrap:wrap; gap:0.5rem; }
+.seo-kw {
+  background:var(--off); border:1px solid var(--border);
+  border-radius:100px; padding:0.35rem 0.9rem;
+  font-size:0.72rem; color:var(--ink); font-weight:500;
+  transition:all .2s;
+}
+.seo-kw:hover { background:var(--ink); color:var(--white); border-color:var(--ink); }
+.seo-stats {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--border);
+  margin-top:2.5rem; border-top:1.5px solid var(--border);
+}
+.seo-stat { background:var(--off); padding:2rem; text-align:center; }
+.seo-stat-val {
+  font-family:'Syne',sans-serif; font-size:3rem; font-weight:800;
+  color:var(--ink); line-height:1; letter-spacing:-0.04em;
+}
+.seo-stat-lbl {
+  font-size:0.65rem; text-transform:uppercase; letter-spacing:0.14em;
+  color:var(--muted); margin-top:0.4rem;
+}
+
+/* ─── TIMELINE ─── */
+.timeline { margin-top:3rem; }
+.tl-row { display:grid; grid-template-columns:150px 1fr; border-top:1px solid var(--border); }
+.tl-left { padding:2rem 1rem 2rem 0; }
+.tl-week { font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--red); font-weight:700; margin-bottom:0.3rem; }
+.tl-dur { font-size:0.78rem; color:var(--muted); }
+.tl-right { padding:2rem 0 2rem 2rem; border-left:1px solid var(--border); }
+.tl-name { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; color:var(--ink); margin-bottom:0.35rem; }
+.tl-desc { font-size:0.82rem; color:var(--muted); line-height:1.65; }
+
+/* ─── SIGNATURE ─── */
+.sign-wrap { max-width:800px; margin:0 auto; }
+.sign-intro { text-align:center; margin-bottom:3.5rem; }
+.sign-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:10px; overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,0.07);
+}
+.sign-card-head {
+  background:var(--ink); padding:2.2rem 2.5rem;
+  display:grid; grid-template-columns:1fr auto; align-items:start; gap:2rem;
+}
+.sign-card-head-title {
+  font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800;
+  color:var(--white);
+}
+.sign-card-head-sub { font-size:0.8rem; color:rgba(255,255,255,0.4); line-height:1.65; margin-top:0.4rem; }
+.sign-summary {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  border-radius:6px; padding:1rem 1.2rem;
+}
+.sign-sum-row { display:flex; justify-content:space-between; gap:1rem; font-size:0.72rem; }
+.sign-sum-row + .sign-sum-row { margin-top:0.4rem; padding-top:0.4rem; border-top:1px solid rgba(255,255,255,0.07); }
+.sign-sum-label { color:rgba(255,255,255,0.38); }
+.sign-sum-val { color:var(--white); font-weight:600; white-space:nowrap; }
+.sign-body { padding:2.2rem 2.5rem; }
+.sign-fields { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; margin-bottom:1.5rem; }
+.sign-field { display:flex; flex-direction:column; gap:0.4rem; }
+.sign-field.full { grid-column:1/-1; }
+.sign-label {
+  font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--muted); font-weight:600;
+}
+.sign-input {
+  background:var(--off); border:1.5px solid var(--border);
+  border-radius:5px; padding:0.75rem 1rem;
+  font-size:0.88rem; color:var(--ink); outline:none;
+  transition:border-color .2s; font-family:'DM Sans',sans-serif;
+}
+.sign-input:focus { border-color:var(--ink); background:var(--white); }
+.sig-pad-section { margin-bottom:1.5rem; }
+.sig-pad-label { font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:0.6rem; }
+.sig-pad-outer {
+  position:relative; border:1.5px dashed var(--border);
+  border-radius:6px; background:var(--off); transition:border-color .2s;
+}
+.sig-pad-outer:hover { border-color:#aaa; }
+.sig-pad-outer.signed { border-style:solid; border-color:var(--ink); }
+canvas#sigCanvas { display:block; width:100%; height:150px; cursor:crosshair; touch-action:none; border-radius:5px; }
+.sig-hint {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+  font-size:0.75rem; color:rgba(0,0,0,0.22); pointer-events:none; text-align:center;
+}
+.sig-hint svg { width:28px; height:28px; opacity:0.22; }
+.sig-hint.hide { display:none; }
+.sig-clear {
+  position:absolute; top:0.6rem; right:0.6rem;
+  background:rgba(0,0,0,0.05); border:none; border-radius:4px;
+  padding:0.28rem 0.65rem; font-size:0.62rem; color:var(--muted);
+  cursor:pointer; font-family:'DM Sans',sans-serif; transition:background .15s;
+}
+.sig-clear:hover { background:rgba(0,0,0,0.1); }
+.sign-terms {
+  background:var(--off); border-radius:6px; padding:1.1rem 1.3rem;
+  margin-bottom:1.5rem; font-size:0.8rem; color:var(--ink); line-height:1.75;
+}
+.sign-terms strong { font-weight:700; }
+.sign-check-row { display:flex; align-items:flex-start; gap:0.7rem; margin-top:0.9rem; }
+.sign-check-row input { width:17px; height:17px; margin-top:0.1rem; accent-color:var(--ink); cursor:pointer; flex-shrink:0; }
+.sign-check-row label { font-size:0.8rem; color:var(--ink); cursor:pointer; line-height:1.55; }
+.sign-error {
+  display:none; background:rgba(232,48,42,0.06); border:1px solid rgba(232,48,42,0.2);
+  border-radius:5px; padding:0.65rem 1rem; font-size:0.78rem; color:var(--red);
+  margin-bottom:1rem;
+}
+.sign-submit {
+  width:100%; background:var(--ink); color:var(--white); border:none;
+  padding:1.1rem; font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:800;
+  letter-spacing:0.14em; text-transform:uppercase; border-radius:5px;
+  cursor:pointer; transition:background .2s;
+  display:flex; align-items:center; justify-content:center; gap:0.7rem;
+}
+.sign-submit:hover { background:var(--red); }
+.sign-submit:disabled { background:#aaa; cursor:not-allowed; }
+.sign-success {
+  display:none; padding:3.5rem 2.5rem; text-align:center;
+}
+.sign-success-icon {
+  width:68px; height:68px; background:#DCFCE7; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;
+}
+.sign-success-icon svg { width:34px; height:34px; color:#16A34A; }
+.sign-success h3 {
+  font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800;
+  color:var(--ink); margin-bottom:0.7rem;
+}
+.sign-success p { font-size:0.88rem; color:var(--muted); line-height:1.75; max-width:400px; margin:0 auto; }
+
+/* ─── EMAILJS SETUP ─── */
+.setup-bar {
+  background:var(--ink2); color:var(--white);
+  padding:1rem 5vw; border-bottom:2px solid var(--red);
+  font-size:0.78rem; line-height:1.7;
+}
+.setup-bar strong { color:#FFD166; }
+.setup-bar code { background:rgba(255,255,255,0.1); padding:0.1rem 0.4rem; border-radius:3px; font-size:0.73rem; }
+.setup-steps-row { display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.5rem; }
+.setup-step { display:flex; align-items:flex-start; gap:0.4rem; flex:1; min-width:200px; }
+.setup-num { background:var(--red); color:#fff; width:18px; height:18px; border-radius:50%; font-size:0.62rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:0.15rem; }
+
+/* ─── FOOTER ─── */
+.footer {
+  background:var(--ink2); border-top:1px solid rgba(255,255,255,0.06);
+  padding:1.8rem 5vw; display:flex; align-items:center;
+  justify-content:space-between; flex-wrap:wrap; gap:1rem;
+}
+.footer img { height:26px; filter:brightness(0) invert(1); opacity:0.6; }
+.footer-txt { font-size:0.7rem; color:rgba(255,255,255,0.28); }
+
+/* ─── REVEAL ─── */
+.rv { opacity:0; transform:translateY(20px); transition:opacity .55s ease, transform .55s ease; }
+.rv.in { opacity:1; transform:translateY(0); }
+.rv-d1 { transition-delay:0.05s; }
+.rv-d2 { transition-delay:0.12s; }
+.rv-d3 { transition-delay:0.19s; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1024px) {
+  .hero { grid-template-columns:1fr; min-height:auto; }
+  .hero-right { min-height:320px; }
+  .ov-grid { grid-template-columns:1fr; }
+  .features-grid { grid-template-columns:1fr; }
+  .feat-col { border-right:none; border-bottom:1.5px solid var(--border); }
+  .feat-col:last-child { border-bottom:none; }
+  .pricing-grid { grid-template-columns:1fr; }
+  .seo-head { grid-template-columns:1fr; }
+  .demo-hero { grid-template-columns:1fr; }
+  .demo-hero-right { display:none; }
+  .demo-cars-grid { grid-template-columns:1fr 1fr; }
+  .demo-features-strip { grid-template-columns:1fr 1fr; }
+  .admin-kpi-row { grid-template-columns:repeat(2,1fr); }
+  .sign-card-head { grid-template-columns:1fr; }
+  .sign-fields { grid-template-columns:1fr; }
+}
+@media(max-width:768px) {
+  .nav-links a:not(.nav-sign) { display:none; }
+  .admin-sidebar { display:none; }
+  .demo-cars-grid { grid-template-columns:1fr; }
+  .demo-features-strip { grid-template-columns:1fr 1fr; }
+  .admin-kpi-row { grid-template-columns:1fr 1fr; }
+  .admin-table-head span:nth-child(n+4), .admin-table-row span:nth-child(n+4) { display:none; }
+  .admin-table-head, .admin-table-row { grid-template-columns:2fr 1.5fr 1fr; }
+  .broker-kpis { grid-template-columns:1fr; }
+  .broker-field-grid { grid-template-columns:1fr 1fr; }
+  .seo-stats { grid-template-columns:1fr; }
+  .tl-row { grid-template-columns:1fr; }
+  .tl-right { border-left:none; border-top:1px solid var(--border); padding:1rem 0 2rem; }
+  .sign-body { padding:1.5rem; }
+  .sign-card-head { padding:1.5rem; }
+  .hero-stats { grid-template-columns:1fr 1fr; }
+  .hero-stat:last-child { border-top:1px solid var(--border); grid-column:1/-1; }
+  .broker-nav-tabs { display:none; }
+  .demo-nav-links { display:none; }
+}
+@media(max-width:480px) {
+  .demo-features-strip { grid-template-columns:1fr; }
+  .broker-field-grid { grid-template-columns:1fr; }
+  .admin-kpi-row { grid-template-columns:1fr; }
+  .seo-head { padding:1.5rem; }
+  .seo-body { padding:1.5rem; }
+  .seo-price { font-size:2rem; }
+  .price-val { font-size:2.5rem; }
+  .features-grid { border:none; gap:1rem; }
+  .feat-col { border:1.5px solid var(--border); border-radius:6px; }
+}
+@keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- EMAILJS SETUP BAR (delete after setup) -->
+<div class="setup-bar">
+  <strong>⚙️ EMAILJS SETUP — One-time, takes 10 min. Delete this bar after done.</strong>
+  <div class="setup-steps-row">
+    <div class="setup-step"><div class="setup-num">1</div><span>Sign up free at <strong>emailjs.com</strong> → Add Gmail → copy <strong>Service ID</strong></span></div>
+    <div class="setup-step"><div class="setup-num">2</div><span>Create Template for <strong>you</strong>. Variables: <code>{{client_name}}</code> <code>{{client_email}}</code> <code>{{client_company}}</code> <code>{{signed_date}}</code></span></div>
+    <div class="setup-step"><div class="setup-num">3</div><span>Create Template for <strong>client</strong>. Set "To Email" = <code>{{client_email}}</code>. Copy both Template IDs.</span></div>
+    <div class="setup-step"><div class="setup-num">4</div><span>Search <code>EMAILJS_CONFIG</code> in this file. Paste your <strong>Public Key, Service ID, and 2 Template IDs</strong>.</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo"><img src="data:image/png;base64,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" alt="AdVenture"></div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#mockups">Demo</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#seo">SEO</a>
+    <a href="#sign" class="nav-sign">Sign Proposal</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Project Proposal</div>
+    <h1 class="hero-h1">
+      Car Leasing<br>Platform
+      <em>.</em><br>Built to Win.
+    </h1>
+    <p class="hero-sub">A custom three-panel platform — customer site, admin dashboard, and broker portal — designed to generate leads and dominate search.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hs-val">3</div><div class="hs-lbl">Custom Panels</div></div>
+      <div class="hero-stat"><div class="hs-val">6–8w</div><div class="hs-lbl">Delivery</div></div>
+      <div class="hero-stat"><div class="hs-val">$9K</div><div class="hs-lbl">Fixed Price</div></div>
+    </div>
+    <div class="hero-btns">
+      <a href="#overview" class="btn-primary">Explore Proposal</a>
+      <a href="#sign" class="btn-ghost">Sign &amp; Accept</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img class="hero-right-img" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=90&fit=crop" alt="Premium Car">
+    <div class="hero-right-overlay"></div>
+    <div class="hero-right-content">
+      <div class="hero-pill"><div class="hero-pill-dot"></div>Proposal Active</div>
+      <div class="hero-card">
+        <div class="hero-card-label">Prepared by AdVenture Agency</div>
+        <div class="hero-card-title">Full-Stack Car Leasing Platform</div>
+        <div class="hero-card-sub">Custom design · 3 dedicated panels · SEO-optimised architecture</div>
+        <div class="hero-panels">
+          <div class="hero-panel-badge">Customer Portal</div>
+          <div class="hero-panel-badge">Admin Panel</div>
+          <div class="hero-panel-badge">Broker Portal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- OVERVIEW -->
+<section id="overview" class="bg-off">
+  <div class="sec-tag">What We're Building</div>
+  <div class="sec-h2">Three Panels.<br><em>One</em> Platform.</div>
+  <div class="sec-desc">A unified system where customers browse deals, brokers list vehicles, and your team controls everything — all running on a single codebase.</div>
+  <div class="ov-grid">
+    <div class="ov-card rv rv-d1">
+      <div class="ov-num">01</div>
+      <div class="ov-title">Customer Website</div>
+      <div class="ov-desc">A high-converting public-facing site where users browse lease deals, filter by brand, budget, or location, compare vehicles, and submit enquiries in seconds.</div>
+      <div class="ov-tags"><span class="ov-tag">Public facing</span><span class="ov-tag">SEO-optimised</span><span class="ov-tag">Lead capture</span></div>
+    </div>
+    <div class="ov-card rv rv-d2">
+      <div class="ov-num">02</div>
+      <div class="ov-title">Admin Dashboard</div>
+      <div class="ov-desc">Your team's command center. Manage listings, approve brokers, handle enquiries, view analytics, and control every aspect of the platform from one secure interface.</div>
+      <div class="ov-tags"><span class="ov-tag">Full control</span><span class="ov-tag">Analytics</span><span class="ov-tag">Role-based access</span></div>
+    </div>
+    <div class="ov-card rv rv-d3">
+      <div class="ov-num">03</div>
+      <div class="ov-title">Broker Portal</div>
+      <div class="ov-desc">A self-serve portal for dealers and brokers to onboard, list vehicles, set pricing, upload photos, and track leads and performance — without any admin involvement.</div>
+      <div class="ov-tags"><span class="ov-tag">Self-onboarding</span><span class="ov-tag">Listing manager</span><span class="ov-tag">Lead tracking</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- MOCKUPS -->
+<section id="mockups">
+  <div class="sec-tag">Interactive Preview</div>
+  <div class="sec-h2">See How It <em>Looks</em></div>
+  <p class="sec-desc">Click each tab to explore all three panels — designed exactly as your users will experience them.</p>
+
+  <div class="panel-tabs">
+    <button class="panel-tab active" onclick="showPanel('user',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+      Customer Website
+    </button>
+    <button class="panel-tab" onclick="showPanel('admin',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Admin Dashboard
+    </button>
+    <button class="panel-tab" onclick="showPanel('broker',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      Broker Portal
+    </button>
+  </div>
+
+  <!-- USER PANEL -->
+  <div class="panel-view active" id="panel-user">
+    <div class="browser-shell">
+      <div class="browser-chrome">
+        <div class="bc-dot r"></div><div class="bc-dot y"></div><div class="bc-dot g"></div>
+        <div class="bc-url"><span class="bc-url-lock">🔒</span> www.yourleasingsite.com</div>
+      </div>
+      <div class="demo-site">
+        <!-- Demo Nav -->
+        <div class="demo-nav">
+          <div class="demo-nav-logo">AUTO<span>LEASE</span></div>
+          <div class="demo-nav-links">
+            <a href="#">Vehicles</a><a href="#">Deals</a><a href="#">Brands</a><a href="#">Locations</a>
+          </div>
+          <button class="demo-nav-btn">Get a Quote</button>
+        </div>
+        <!-- Demo Hero -->
+        <div class="demo-hero">
+          <div class="demo-hero-left">
+            <div class="demo-hero-eyebrow">Premium Lease Deals</div>
+            <div class="demo-hero-h1">Find Your<br><span>Perfect</span><br>Lease.</div>
+            <div class="demo-hero-sub">Browse 500+ vehicles from top brands. Zero hidden fees. Instant approval in 60 seconds.</div>
+            <div class="demo-search-bar">
+              <input type="text" placeholder="Make or Model...">
+              <select><option>Any Budget</option><option>&lt;$400/mo</option><option>&lt;$600/mo</option></select>
+              <button class="demo-search-btn">Search</button>
+            </div>
+          </div>
+          <div class="demo-hero-right">
+            <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=700&q=85&fit=crop" alt="BMW">
+            <div class="demo-hero-right-overlay"></div>
+            <div class="demo-hero-badge">
+              <div class="demo-hero-badge-top">Featured This Week</div>
+              <div class="demo-hero-badge-val">BMW 3 Series — $429/mo</div>
+            </div>
+          </div>
+        </div>
+        <!-- Cars header -->
+        <div class="demo-cars-header">
+          <div class="demo-cars-title">Available Lease Deals</div>
+          <div class="demo-cars-filters">
+            <div class="demo-filter-chip active">All</div>
+            <div class="demo-filter-chip">Sedans</div>
+            <div class="demo-filter-chip">SUVs</div>
+            <div class="demo-filter-chip">Electric</div>
+          </div>
+        </div>
+        <!-- Cars grid -->
+        <div class="demo-cars-grid">
+          <!-- BMW -->
+          <div class="demo-car-card">
+            <div class="demo-car-img-wrap">
+              <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=480&q=80&fit=crop" alt="BMW 3 Series">
+              <div class="demo-car-img-overlay"></div>
+              <div class="demo-car-badge-avail">Available</div>
+            </div>
+            <div class="demo-car-body">
+              <div class="demo-car-brand">BMW</div>
+              <div class="demo-car-name">3 Series 330i</div>
+              <div class="demo-car-specs">
+                <div class="demo-car-spec"><svg viewBox="0 0 16 16" fill="currentColor" style="width:10px;height:10px;opacity:.5"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11z"/></svg>2025</div>
+                <div class="demo-car-spec">Sedan · AWD</div>
+                <div class="demo-car-spec">255 hp</div>
+              </div>
+            </div>
+            <div class="demo-car-footer">
+              <div class="demo-car-price">$429 <span>/mo</span></div>
+              <button class="demo-car-cta">View Deal</button>
+            </div>
+          </div>
+          <!-- Mercedes -->
+          <div class="demo-car-card">
+            <div class="demo-car-img-wrap">
+              <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=480&q=80&fit=crop" alt="Mercedes GLE">
+              <div class="demo-car-img-overlay"></div>
+              <div class="demo-car-badge-avail">Available</div>
+            </div>
+            <div class="demo-car-body">
+              <div class="demo-car-brand">Mercedes-Benz</div>
+              <div class="demo-car-name">GLE 450 4MATIC</div>
+              <div class="demo-car-specs">
+                <div class="demo-car-spec">2025</div>
+                <div class="demo-car-spec">SUV · AWD</div>
+                <div class="demo-car-spec">362 hp</div>
+              </div>
+            </div>
+            <div class="demo-car-footer">
+              <div class="demo-car-price">$689 <span>/mo</span></div>
+              <button class="demo-car-cta">View Deal</button>
+            </div>
+          </div>
+          <!-- Tesla -->
+          <div class="demo-car-card">
+            <div class="demo-car-img-wrap">
+              <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=480&q=80&fit=crop" alt="Tesla Model 3">
+              <div class="demo-car-img-overlay"></div>
+              <div class="demo-car-badge-avail">Available</div>
+            </div>
+            <div class="demo-car-body">
+              <div class="demo-car-brand">Tesla</div>
+              <div class="demo-car-name">Model 3 Long Range</div>
+              <div class="demo-car-specs">
+                <div class="demo-car-spec">2025</div>
+                <div class="demo-car-spec">Sedan · EV</div>
+                <div class="demo-car-spec">358 mi range</div>
+              </div>
+            </div>
+            <div class="demo-car-footer">
+              <div class="demo-car-price">$549 <span>/mo</span></div>
+              <button class="demo-car-cta">View Deal</button>
+            </div>
+          </div>
+        </div>
+        <!-- Features strip -->
+        <div class="demo-features-strip">
+          <div class="demo-feature">
+            <div class="demo-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+            <div class="demo-feat-text"><div class="demo-feat-title">Smart Search</div><div class="demo-feat-sub">Filter by brand, budget &amp; location</div></div>
+          </div>
+          <div class="demo-feature">
+            <div class="demo-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+            <div class="demo-feat-text"><div class="demo-feat-title">Compare Deals</div><div class="demo-feat-sub">Side-by-side comparison</div></div>
+          </div>
+          <div class="demo-feature">
+            <div class="demo-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013 8.79 19.79 19.79 0 01.1 4.18 2 2 0 012.18 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 9.91A16 16 0 0014.09 17.09l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 17.92z"/></svg></div>
+            <div class="demo-feat-text"><div class="demo-feat-title">Instant Enquiry</div><div class="demo-feat-sub">Connect with brokers directly</div></div>
+          </div>
+          <div class="demo-feature">
+            <div class="demo-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div class="demo-feat-text"><div class="demo-feat-title">Location Filter</div><div class="demo-feat-sub">Find deals near you</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="panel-view" id="panel-admin">
+    <div class="browser-shell">
+      <div class="browser-chrome">
+        <div class="bc-dot r"></div><div class="bc-dot y"></div><div class="bc-dot g"></div>
+        <div class="bc-url"><span class="bc-url-lock">🔒</span> admin.yourleasingsite.com</div>
+      </div>
+      <div class="admin-wrap">
+        <div class="admin-sidebar">
+          <div class="admin-sb-head">
+            <div class="admin-sb-logo">AUTO<span>LEASE</span></div>
+            <div class="admin-sb-role">Administrator</div>
+          </div>
+          <div class="admin-sb-group">
+            <div class="admin-sb-label">Main</div>
+            <div class="admin-sb-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+            <div class="admin-sb-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17H5a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3"/><path d="M13 21l4-4m0 0l4 4m-4-4v9" display="none"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="m16 8 5 3-5 3V8z"/></svg>Listings<div class="badge-dot">12</div></div>
+            <div class="admin-sb-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users</div>
+            <div class="admin-sb-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>Brokers<div class="badge-dot">5</div></div>
+            <div class="admin-sb-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Enquiries</div>
+          </div>
+          <div class="admin-sb-group">
+            <div class="admin-sb-label">System</div>
+            <div class="admin-sb-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analytics</div>
+            <div class="admin-sb-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</div>
+          </div>
+        </div>
+        <div class="admin-body">
+          <div class="admin-topbar">
+            <div class="admin-page-title">Dashboard Overview</div>
+            <div class="admin-topbar-right">
+              <div class="admin-date-chip">Thu 26 Feb, 2025</div>
+              <button class="admin-add-btn">+ Add Listing</button>
+            </div>
+          </div>
+          <div class="admin-kpi-row">
+            <div class="kpi"><div class="kpi-val">1,284</div><div class="kpi-label">Total Listings</div><div class="kpi-delta">↑ 12% this week</div></div>
+            <div class="kpi"><div class="kpi-val">847</div><div class="kpi-label">Active Users</div><div class="kpi-delta">↑ 8% this week</div></div>
+            <div class="kpi"><div class="kpi-val">342</div><div class="kpi-label">New Enquiries</div><div class="kpi-delta">↑ 23% today</div></div>
+            <div class="kpi"><div class="kpi-val">94</div><div class="kpi-label">Active Brokers</div><div class="kpi-delta">5 pending review</div></div>
+          </div>
+          <div class="admin-table-card">
+            <div class="admin-table-head"><span>Vehicle</span><span>Broker</span><span>Price/mo</span><span>Leads</span><span>Status</span></div>
+            <div class="admin-table-row"><span>BMW 3 Series 2025</span><span>Metro Auto NY</span><span>$429</span><span>14</span><span><span class="pill active">Active</span></span></div>
+            <div class="admin-table-row"><span>Mercedes GLE 450</span><span>City Lease Co</span><span>$689</span><span>8</span><span><span class="pill active">Active</span></span></div>
+            <div class="admin-table-row"><span>Tesla Model 3 LR</span><span>EV Motors NYC</span><span>$549</span><span>21</span><span><span class="pill pending">Pending</span></span></div>
+            <div class="admin-table-row"><span>Audi Q5 Sport 2025</span><span>Prestige Auto</span><span>$612</span><span>6</span><span><span class="pill review">In Review</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BROKER PANEL -->
+  <div class="panel-view" id="panel-broker">
+    <div class="browser-shell">
+      <div class="browser-chrome">
+        <div class="bc-dot r"></div><div class="bc-dot y"></div><div class="bc-dot g"></div>
+        <div class="bc-url"><span class="bc-url-lock">🔒</span> broker.yourleasingsite.com</div>
+      </div>
+      <div class="broker-wrap">
+        <div class="broker-topbar">
+          <div class="broker-identity"><div class="broker-welcome">Welcome back</div><div class="broker-name">Metro Auto Leasing</div></div>
+          <div class="broker-nav-tabs">
+            <div class="broker-nav-tab active">Dashboard</div>
+            <div class="broker-nav-tab">My Listings</div>
+            <div class="broker-nav-tab">Leads</div>
+            <div class="broker-nav-tab">Account</div>
+          </div>
+          <button class="broker-add-btn">+ Add Listing</button>
+        </div>
+        <div class="broker-body">
+          <div class="broker-kpis">
+            <div class="bkpi"><div class="bkpi-val">23</div><div class="bkpi-lbl">Active Listings</div><div class="bkpi-delta">↑ 3 this month</div></div>
+            <div class="bkpi"><div class="bkpi-val"><sup>$</sup>18,400</div><div class="bkpi-lbl">Revenue This Month</div><div class="bkpi-delta">↑ 18% vs last month</div></div>
+            <div class="bkpi"><div class="bkpi-val">47</div><div class="bkpi-lbl">Leads Received</div><div class="bkpi-delta">↑ 12 this week</div></div>
+          </div>
+          <div class="broker-form-card">
+            <div class="broker-form-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              Add New Vehicle Listing
+            </div>
+            <div class="broker-field-grid">
+              <div class="bf"><label>Make</label><input type="text" placeholder="e.g. BMW"></div>
+              <div class="bf"><label>Model</label><input type="text" placeholder="e.g. 3 Series"></div>
+              <div class="bf"><label>Year</label><select><option>2025</option><option>2024</option></select></div>
+              <div class="bf"><label>Monthly Price</label><input type="text" placeholder="$429/mo"></div>
+              <div class="bf"><label>Location</label><input type="text" placeholder="New York, NY"></div>
+              <div class="bf"><label>Availability</label><select><option>In Stock</option><option>On Order</option></select></div>
+            </div>
+            <button class="broker-submit">Publish Listing →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- FEATURES -->
+<section class="bg-off">
+  <div class="sec-tag">What's Included</div>
+  <div class="sec-h2">Everything<br>You <em>Get</em></div>
+  <p class="sec-desc">Every panel comes fully built, tested, and ready. No hidden scope, no extra charges.</p>
+  <div class="features-grid rv">
+    <div class="feat-col">
+      <div class="feat-col-num">01 / Customer Panel</div>
+      <div class="feat-col-title">User-Facing Website</div>
+      <ul class="feat-list">
+        <li>Homepage — hero, featured deals &amp; CTAs</li>
+        <li>Vehicle listings with advanced filters</li>
+        <li>Individual car detail pages + gallery</li>
+        <li>Compare up to 3 vehicles side-by-side</li>
+        <li>Lead &amp; enquiry capture forms</li>
+        <li>Location-based deal filtering</li>
+        <li>Mobile-first, performance-optimised</li>
+        <li>SEO-optimised page structure &amp; metadata</li>
+      </ul>
+    </div>
+    <div class="feat-col">
+      <div class="feat-col-num">02 / Admin Dashboard</div>
+      <div class="feat-col-title">Management Command Center</div>
+      <ul class="feat-list">
+        <li>Full listing management — add, edit, remove</li>
+        <li>User account management &amp; access control</li>
+        <li>Broker onboarding &amp; approval system</li>
+        <li>Lead inbox with pipeline status tracking</li>
+        <li>Platform analytics &amp; conversion reports</li>
+        <li>Role-based team permissions</li>
+        <li>Content management (banners, promotions)</li>
+        <li>Automated email notification system</li>
+      </ul>
+    </div>
+    <div class="feat-col">
+      <div class="feat-col-num">03 / Broker Portal</div>
+      <div class="feat-col-title">Dealer &amp; Lister Panel</div>
+      <ul class="feat-list">
+        <li>Self-service onboarding &amp; profile setup</li>
+        <li>Add and manage own vehicle listings</li>
+        <li>Photo upload, pricing &amp; spec editing</li>
+        <li>View leads &amp; enquiries per listing</li>
+        <li>Performance metrics &amp; analytics</li>
+        <li>Direct messaging with customers</li>
+        <li>Subscription &amp; plan management</li>
+        <li>Notification &amp; alert preferences</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="sec-tag">Investment</div>
+  <div class="sec-h2">Simple,<br>Transparent <em>Pricing</em></div>
+  <p class="sec-desc">Two structures. No surprises. A fixed build fee and an optional monthly retainer.</p>
+  <div class="pricing-grid">
+    <div class="price-card rv rv-d1">
+      <div class="price-card-head">
+        <div class="price-type">One-Time Cost</div>
+        <div class="price-name">Platform Build</div>
+        <div class="price-amount"><div class="price-cur">$</div><div class="price-val">9,000</div></div>
+        <div class="price-desc">Full custom build of your 3-panel car leasing platform. Split into two comfortable payments.</div>
+        <div class="price-note"><strong>50% upfront</strong> — $4,500 to start development<br><strong>50% on delivery</strong> — $4,500 once live &amp; approved</div>
+      </div>
+      <div class="price-card-body">
+        <ul class="price-items">
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Fully custom design — no templates</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>All 3 panels: customer, admin &amp; broker</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Mobile-responsive, cross-browser tested</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>SEO-optimised technical architecture</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Secure authentication &amp; role system</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Lead capture &amp; notification system</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>6–8 week delivery timeline</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>2 weeks post-launch bug support</li>
+        </ul>
+      </div>
+    </div>
+    <div class="price-card dark rv rv-d2" style="position:relative;">
+      <div class="price-badge">Recommended</div>
+      <div class="price-card-head">
+        <div class="price-type">Monthly Recurring</div>
+        <div class="price-name">Maintenance &amp; Hosting</div>
+        <div class="price-amount"><div class="price-cur">$</div><div class="price-val">500</div><div class="price-per">/mo</div></div>
+        <div class="price-desc">Keep your platform fast, secure, and maintained. Hosting, patches, and minor updates all included.</div>
+        <div class="price-note"><strong>Includes 5 hrs/month</strong> of content updates, UI tweaks &amp; small feature additions at no extra cost.</div>
+      </div>
+      <div class="price-card-body">
+        <ul class="price-items">
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Managed cloud hosting — fast &amp; reliable</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Monthly security patches &amp; updates</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Daily automated backups</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Performance monitoring &amp; optimisation</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Up to 5 hrs/mo changes &amp; edits</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Priority support via WhatsApp &amp; email</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>SSL certificate management</li>
+          <li class="price-item"><div class="pi-check"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 3 6 7 2"/></svg></div>Uptime monitoring &amp; instant alerts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- SEO -->
+<section id="seo" class="bg-off">
+  <div class="sec-tag">Growth Add-On</div>
+  <div class="sec-h2">Rank on Google.<br><em>Automatically.</em></div>
+  <div class="seo-box rv">
+    <div class="seo-head">
+      <div>
+        <div class="seo-head-title">Programmatic <em>SEO</em></div>
+        <div class="seo-head-sub">Own the top results for every city, brand, and leasing query your customers search — built systematically, at scale, every month.</div>
+      </div>
+      <div class="seo-price-block">
+        <div class="seo-price">$1,000</div>
+        <div class="seo-price-sub">Per Month · 30 Articles</div>
+      </div>
+    </div>
+    <div class="seo-body">
+      <p class="seo-explain">
+        <strong>What is Programmatic SEO?</strong> Instead of writing one blog post at a time, we build a system that generates hundreds of targeted, optimised pages — one for every city, car brand, and lease query your customers type into Google. Each page is structured to rank.
+        <br><br>
+        <strong>Why it matters for your business:</strong> When someone searches <em>"best car leasing company in New York"</em> or <em>"BMW lease deals Chicago"</em>, your platform appears at the top organically — no ad spend needed. Over 12 months, this builds a compounding traffic engine that drives qualified leads daily, permanently.
+      </p>
+      <div class="seo-kw-label">Sample keywords we'll help you rank for</div>
+      <div class="seo-kws">
+        <span class="seo-kw">best car leasing company new york</span>
+        <span class="seo-kw">BMW lease deals NYC 2025</span>
+        <span class="seo-kw">cheap car lease no credit NYC</span>
+        <span class="seo-kw">mercedes lease deals chicago</span>
+        <span class="seo-kw">tesla model 3 lease new york</span>
+        <span class="seo-kw">car lease vs buy 2025</span>
+        <span class="seo-kw">SUV lease deals near me</span>
+        <span class="seo-kw">luxury car lease monthly NYC</span>
+        <span class="seo-kw">audi lease new jersey</span>
+        <span class="seo-kw">best lease under $400/mo</span>
+        <span class="seo-kw">no money down car lease 2025</span>
+        <span class="seo-kw">electric car lease NY</span>
+      </div>
+      <div class="seo-stats">
+        <div class="seo-stat"><div class="seo-stat-val">30</div><div class="seo-stat-lbl">Articles / Month</div></div>
+        <div class="seo-stat"><div class="seo-stat-val">360+</div><div class="seo-stat-lbl">Ranking Pages / Year</div></div>
+        <div class="seo-stat"><div class="seo-stat-val">100%</div><div class="seo-stat-lbl">SEO Optimised</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- TIMELINE -->
+<section>
+  <div class="sec-tag">Process</div>
+  <div class="sec-h2">How We <em>Deliver</em></div>
+  <div class="timeline">
+    <div class="tl-row rv"><div class="tl-left"><div class="tl-week">Week 1–2</div><div class="tl-dur">Discovery &amp; Design</div></div><div class="tl-right"><div class="tl-name">Wireframes &amp; UI Design</div><div class="tl-desc">Requirement gathering, sitemap, wireframes, and full visual design for all 3 panels. You review and sign off before a single line of code is written.</div></div></div>
+    <div class="tl-row rv"><div class="tl-left"><div class="tl-week">Week 3–5</div><div class="tl-dur">Development</div></div><div class="tl-right"><div class="tl-name">Full Platform Build</div><div class="tl-desc">Frontend, backend, database architecture, authentication, and all three panels built and integrated end-to-end.</div></div></div>
+    <div class="tl-row rv"><div class="tl-left"><div class="tl-week">Week 6</div><div class="tl-dur">Testing &amp; QA</div></div><div class="tl-right"><div class="tl-name">Quality &amp; Performance</div><div class="tl-desc">Cross-browser testing, mobile QA, performance optimisation, and security review. A staging link is shared for your full review.</div></div></div>
+    <div class="tl-row rv"><div class="tl-left"><div class="tl-week">Week 7–8</div><div class="tl-dur">Launch</div></div><div class="tl-right"><div class="tl-name">Go Live &amp; Handover</div><div class="tl-desc">Final deployment, domain configuration, team training, documentation, and 2-week priority support window post-launch.</div></div></div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- SIGNATURE -->
+<section class="bg-off" id="sign">
+  <div class="sign-wrap">
+    <div class="sign-intro">
+      <div class="sec-tag" style="justify-content:center;">Agreement</div>
+      <div class="sec-h2">Sign &amp; <em>Accept</em></div>
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.8;max-width:460px;margin:0.8rem auto 0;font-weight:300;">Review the proposal, fill in your details, draw your signature, and submit. You'll receive a confirmation instantly — we'll be in touch within 24 hours.</p>
+    </div>
+    <div class="sign-card">
+      <div class="sign-card-head">
+        <div>
+          <div class="sign-card-head-title">Digital Agreement</div>
+          <div class="sign-card-head-sub">By signing, you accept the scope, pricing, and payment terms outlined in this proposal. This acts as your binding digital agreement with AdVenture Agency.</div>
+        </div>
+        <div class="sign-summary">
+          <div class="sign-sum-row"><div class="sign-sum-label">Project</div><div class="sign-sum-val">Car Leasing Platform</div></div>
+          <div class="sign-sum-row"><div class="sign-sum-label">Build Fee</div><div class="sign-sum-val">$9,000 (50/50)</div></div>
+          <div class="sign-sum-row"><div class="sign-sum-label">Monthly</div><div class="sign-sum-val">$500/mo optional</div></div>
+          <div class="sign-sum-row"><div class="sign-sum-label">Timeline</div><div class="sign-sum-val">6–8 Weeks</div></div>
+        </div>
+      </div>
+
+      <div id="signFormBody">
+        <div class="sign-body">
+          <div class="sign-fields">
+            <div class="sign-field"><div class="sign-label">Full Name *</div><input class="sign-input" type="text" id="sName" placeholder="John Smith"></div>
+            <div class="sign-field"><div class="sign-label">Company Name *</div><input class="sign-input" type="text" id="sCompany" placeholder="Your Company Ltd"></div>
+            <div class="sign-field full"><div class="sign-label">Email Address * — your agreement copy will be sent here</div><input class="sign-input" type="email" id="sEmail" placeholder="john@yourcompany.com"></div>
+          </div>
+
+          <div class="sig-pad-section">
+            <div class="sig-pad-label">Your Signature *</div>
+            <div class="sig-pad-outer" id="sigPad">
+              <canvas id="sigCanvas"></canvas>
+              <div class="sig-hint" id="sigHint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                Sign with mouse or finger
+              </div>
+              <button class="sig-clear" onclick="clearSig()">Clear</button>
+            </div>
+          </div>
+
+          <div class="sign-terms">
+            I agree to engage <strong>AdVenture Agency</strong> for the development of a custom car leasing web platform as described.<br>
+            <strong>Build: $9,000 USD</strong> (50% advance, 50% on delivery) &nbsp;·&nbsp; <strong>Maintenance: $500/month</strong> (optional) &nbsp;·&nbsp; <strong>Delivery: 6–8 weeks</strong>
+            <div class="sign-check-row">
+              <input type="checkbox" id="agreeBox">
+              <label for="agreeBox">I have read and agree to the terms. I authorise AdVenture Agency to begin work upon receipt of the advance payment.</label>
+            </div>
+          </div>
+
+          <div class="sign-error" id="signErr"></div>
+
+          <button class="sign-submit" id="signBtn" onclick="doSign()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Sign &amp; Accept Proposal
+          </button>
+        </div>
+      </div>
+
+      <div class="sign-success" id="signSuccess">
+        <div class="sign-success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h3>Proposal Accepted!</h3>
+        <p>Your agreement has been recorded and a confirmation copy has been sent to your email. AdVenture Agency will reach out within 24 hours to kick off the project.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <img src="data:image/png;base64,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" alt="AdVenture">
+  <div class="footer-txt">© 2025 AdVenture Agency · Project Proposal · All rights reserved</div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   EMAILJS_CONFIG — Replace all 4 values below
+══════════════════════════════════════════════ */
+const EJ_PUBLIC_KEY       = "YOUR_PUBLIC_KEY";
+const EJ_SERVICE_ID       = "YOUR_SERVICE_ID";
+const EJ_TEMPLATE_AGENCY  = "YOUR_TEMPLATE_ID_AGENCY";  // email → your inbox
+const EJ_TEMPLATE_CLIENT  = "YOUR_TEMPLATE_ID_CLIENT";  // email → client inbox
+/* ══════════════════════════════════════════════ */
+
+emailjs.init(EJ_PUBLIC_KEY);
+
+/* Panel switcher */
+function showPanel(id, el) {
+  document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+/* Scroll reveal */
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.07 });
+document.querySelectorAll('.rv').forEach(el => ro.observe(el));
+
+/* Signature canvas */
+const canvas = document.getElementById('sigCanvas');
+const ctx = canvas.getContext('2d');
+let drawing = false, hasSig = false;
+
+function initCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.parentElement.getBoundingClientRect().width;
+  canvas.width = w * dpr; canvas.height = 150 * dpr;
+  canvas.style.width = w + 'px'; canvas.style.height = '150px';
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#0B0C0F'; ctx.lineWidth = 1.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+}
+initCanvas();
+window.addEventListener('resize', initCanvas);
+
+function getXY(e) {
+  const r = canvas.getBoundingClientRect();
+  return e.touches
+    ? { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }
+    : { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+canvas.addEventListener('mousedown', e => { drawing = true; ctx.beginPath(); const p = getXY(e); ctx.moveTo(p.x, p.y); });
+canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getXY(e); ctx.lineTo(p.x, p.y); ctx.stroke(); markSig(); });
+canvas.addEventListener('mouseup', () => drawing = false);
+canvas.addEventListener('mouseleave', () => drawing = false);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; ctx.beginPath(); const p = getXY(e); ctx.moveTo(p.x, p.y); }, { passive:false });
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getXY(e); ctx.lineTo(p.x, p.y); ctx.stroke(); markSig(); }, { passive:false });
+canvas.addEventListener('touchend', () => drawing = false);
+
+function markSig() {
+  hasSig = true;
+  document.getElementById('sigHint').classList.add('hide');
+  document.getElementById('sigPad').classList.add('signed');
+}
+function clearSig() {
+  ctx.clearRect(0, 0, canvas.width / (window.devicePixelRatio||1), 150);
+  hasSig = false;
+  document.getElementById('sigHint').classList.remove('hide');
+  document.getElementById('sigPad').classList.remove('signed');
+}
+
+/* Submit */
+async function doSign() {
+  const name = document.getElementById('sName').value.trim();
+  const co   = document.getElementById('sCompany').value.trim();
+  const mail = document.getElementById('sEmail').value.trim();
+  const ok   = document.getElementById('agreeBox').checked;
+  const err  = document.getElementById('signErr');
+  err.style.display = 'none';
+
+  if (!name || !co || !mail) { err.textContent = 'Please fill in all fields.'; err.style.display = 'block'; return; }
+  if (!/\S+@\S+\.\S+/.test(mail)) { err.textContent = 'Please enter a valid email address.'; err.style.display = 'block'; return; }
+  if (!hasSig) { err.textContent = 'Please draw your signature above.'; err.style.display = 'block'; return; }
+  if (!ok) { err.textContent = 'Please check the agreement checkbox to continue.'; err.style.display = 'block'; return; }
+
+  const btn = document.getElementById('signBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;width:18px;height:18px"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Sending…';
+
+  const params = {
+    client_name: name, client_email: mail, client_company: co,
+    signed_date: new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }),
+    proposal_value: '$9,000', agency_name: 'AdVenture Agency',
+    signature_image: canvas.toDataURL('image/png')
+  };
+
+  try {
+    await emailjs.send(EJ_SERVICE_ID, EJ_TEMPLATE_AGENCY, params);
+    await emailjs.send(EJ_SERVICE_ID, EJ_TEMPLATE_CLIENT, params);
+    document.getElementById('signFormBody').style.display = 'none';
+    document.getElementById('signSuccess').style.display = 'block';
+  } catch(e) {
+    err.textContent = 'Something went wrong sending emails. Check your EmailJS config or contact us directly.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sign & Accept Proposal';
+    console.error('EmailJS:', e);
+  }
+}
+</script>
+</body>
+</html>
